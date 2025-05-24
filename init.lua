@@ -121,6 +121,9 @@ end)
 -- Enable break indent
 vim.o.breakindent = true
 
+-- Set the Default Font
+vim.o.guifont = 'JetBrainsMono NF:h14'
+
 -- Save undo history
 vim.o.undofile = true
 
