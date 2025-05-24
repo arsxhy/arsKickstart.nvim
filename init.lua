@@ -83,7 +83,7 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
-
+vim.o.termguicolors = true
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -92,6 +92,57 @@ vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
+
+-- Neovim Specific settings if opened in Neovide
+if vim.g.neovide then
+  -- Set the Default Font
+  vim.o.guifont = 'JetBrainsMono NF:h10'
+  vim.g.neovide_scale_factor = 1.0
+  -- Override highlight grup 'Normal' agar latar belakangnya transparan (NONE)
+  -- Ini adalah langkah kunci jika tema menimpa transparansi di GUI
+  vim.cmd 'highlight Normal guibg=NONE'
+
+  -- Transparansi Neovide
+  -- Ada beberapa opsi transparansi di Neovide yang bisa saling memengaruhi.
+  -- Kita akan fokus pada yang paling umum untuk transparansi jendela.
+
+  -- g:neovide_transparency: Ini adalah opsi lama dan seringkali tidak disarankan
+  -- karena dapat menyebabkan masalah rendering dengan beberapa tema atau plugin.
+  -- Nilainya harus antara 0 (opaque) dan 1 (fully transparent).
+  -- Anda set ke 0, yang berarti sepenuhnya buram (opaque).
+  -- Jika Anda ingin transparansi, Anda perlu set ini ke nilai yang lebih besar dari 0,
+  -- ATAU gunakan opacity. Lebih baik jangan gunakan ini kecuali Anda tahu persis apa yang Anda lakukan.
+  -- vim.g.neovide_transparency = 0 -- Komentari atau hapus baris ini
+
+  -- g:neovide_opacity: Mengontrol opasitas latar belakang jendela secara keseluruhan.
+  -- Nilai antara 0.0 (fully transparent) dan 1.0 (fully opaque).
+  -- Anda sudah set ke 0.8, yang berarti 80% opaque (20% transparent).
+  -- Ini adalah cara yang direkomendasikan untuk mengatur transparansi utama.
+  vim.g.neovide_opacity = 0.8
+
+  -- g:neovide_normal_opacity: Mengontrol opasitas saat di mode normal.
+  -- Ini bisa digunakan jika Anda ingin opasitas yang berbeda saat di mode normal
+  -- dibandingkan dengan mode insert/visual. Jika sama dengan g:neovide_opacity,
+  -- tidak ada perubahan visual.
+  vim.g.neovide_normal_opacity = 0.8 -- Pertahankan ini jika Anda ingin konsisten
+  vim.g.neovide_insert_opacity = 0.8
+  vim.g.neovide_visual_opacity = 0.8
+
+  -- Opsi penting lainnya:
+  -- g:neovide_background_color: Ini adalah warna latar belakang yang akan
+  -- digunakan Neovide jika tidak ada transparansi atau jika transparansi
+  -- tidak didukung oleh kompositor Anda.
+  -- Penting: Jika Anda ingin transparansi, pastikan tema Neovim Anda juga
+  -- tidak mengatur warna latar belakang secara eksplisit menjadi opaque.
+  -- Contoh: Jika tema Anda punya highlight `Normal` dengan `bg=#000000`,
+  -- itu akan menimpa transparansi Neovide.
+  -- Anda bisa mengatur `vim.o.termguicolors = true` di init.lua Anda
+  -- agar tema Anda dapat menggunakan warna 24-bit penuh dan transparansi.
+  -- Untuk latar belakang transparan, Anda bisa menggunakan warna dengan channel alpha,
+  -- misalnya '#00000000' (hitam transparan penuh).
+  -- Atau biarkan Neovide mengelola sepenuhnya dengan tidak menyetelnya di sini.
+  vim.g.neovide_background_color = '#00000000' -- Contoh, jika diperlukan
+end
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -120,9 +171,6 @@ end)
 
 -- Enable break indent
 vim.o.breakindent = true
-
--- Set the Default Font
-vim.o.guifont = 'JetBrainsMono NF:h14'
 
 -- Save undo history
 vim.o.undofile = true
@@ -893,6 +941,9 @@ require('lazy').setup({
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        -- transparent_bg = true, -- Ini sudah benar untuk tema
+        -- Anda juga bisa menambahkan ini jika mau, tapi highlight Normal lebih penting
+        -- lualine_bg_color = "none", -- Contoh, jika lualine Anda juga solid
       }
 
       -- Load the colorscheme here.
