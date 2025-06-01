@@ -793,7 +793,6 @@ require('lazy').setup({
         tailwindcss = {},
         jsonls = {},
         jqls = {},
-        java_language_server = {},
         cmake = {},
         mesonlsp = {},
         bashls = {},
@@ -854,6 +853,8 @@ require('lazy').setup({
       }
     end,
   },
+
+  { 'mfussenegger/nvim-jdtls' },
 
   { -- Autoformat
     'stevearc/conform.nvim',
