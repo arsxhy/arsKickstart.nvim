@@ -16,6 +16,7 @@ return {
         sass = { 'stylelint' },
         python = { 'ruff' },
         json = { 'jsonlint' },
+        java = { 'checkstyle' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
