@@ -88,11 +88,11 @@ vim.o.termguicolors = true
 -- Neovim Specific settings if opened in Neovide
 if vim.g.neovide then
   -- Set Default TERM env for Neovide
-  -- vim.env.TERM = 'xterm-kitty'
-  vim.env.TERM = 'xterm-256color'
+  vim.env.TERM = 'xterm-kitty'
+  -- vim.env.TERM = 'xterm-256color'
 
   -- Set the Default Font
-  vim.o.guifont = 'JetBrainsMono NF:h12'
+  vim.o.guifont = 'JetBrainsMono NF:h11'
   vim.g.neovide_scale_factor = 1.0
 end
 
@@ -267,6 +267,38 @@ require('lazy').setup({
   --
   -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
   --
+  -- Cord.Nvim (neovim discord rich presence)
+  -- Docs = https://github.com/vyfor/cord.nvim
+  {
+    'vyfor/cord.nvim',
+    build = ':Cord update',
+    opts = function()
+      return {
+        display = {
+          theme = 'default',
+          flavor = 'accent',
+          swap_fields = true,
+          swap_icons = true,
+        },
+        timestamp = {
+          enabled = true,
+          reset_on_idle = true,
+          reset_on_change = false,
+        },
+        text = {
+          editing = function(opts)
+            return string.format('Editing %s - Line %s: Column %s', opts.filename, opts.cursor_line, opts.cursor_char)
+          end,
+        },
+        hooks = {
+          post_activity = function(opts, activity)
+            local version = vim.version()
+            activity.assets.small_text = string.format('Neovim %s.%s.%s', version.major, version.minor, version.patch)
+          end,
+        },
+      }
+    end,
+  },
 
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
   -- If you prefer to call `setup` explicitly, use:
@@ -471,6 +503,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- Shortcut for searching your user configuration files
+      vim.keymap.set('n', '<leader>sc', function()
+        builtin.find_files { cwd = '~/.config/' }
+      end, { desc = '[S]earch [XDG_CONFIG_HOME]' })
     end,
   },
 
@@ -683,17 +720,32 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {
+          textDocument = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+          },
+        },
+        gopls = {},
+        -- pyright = {
+        --   settings = {
+        --     python = {
+        --       completion = {
+        --         callSnippet = 'Replace',
+        --       },
+        --     },
+        --   },
+        -- },
+        ruff = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
         --
 
         lua_ls = {
@@ -710,6 +762,44 @@ require('lazy').setup({
             },
           },
         },
+        html = {
+          settings = {
+            html = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+            },
+          },
+        },
+        cssls = {
+          css = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+          },
+          less = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+          },
+          scss = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+          },
+        },
+        cssmodules_ls = {},
+        css_variables = {},
+        tailwindcss = {},
+        jsonls = {},
+        jqls = {},
+        cmake = {},
+        mesonlsp = {},
+        bashls = {},
+        autotools_ls = {},
+        awk_ls = {},
+        hyprls = {},
+        marksman = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -728,6 +818,21 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'isort',
+        'black',
+        'ruff',
+        'shellcheck',
+        'shfmt',
+        'prettierd',
+        'prettier',
+        'htmlbeautifier',
+        'htmlhint',
+        'clang-format',
+        'cmakelang',
+        'stylelint',
+        'markdownlint',
+        'marksman',
+        'jsonlint',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -781,10 +886,18 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black', 'ruff' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        bash = { 'shfmt' },
+        html = { 'htmlbeautifier' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
+        cmake = { 'cmakelang' },
       },
     },
   },
@@ -991,10 +1104,10 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
