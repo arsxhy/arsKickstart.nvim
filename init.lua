@@ -231,6 +231,57 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+--   pattern = '/var/tmp/*', -- Atau path yang lebih spesifik jika diketahui
+--   callback = function(args)
+--     -- Coba paksa deteksi filetype jika belum ada atau generik
+--     if vim.bo[args.buf].filetype == '' or vim.bo[args.buf].filetype == 'conf' then
+--       -- Ini akan menjalankan skrip deteksi filetype standar Neovim
+--       vim.cmd 'filetype detect'
+--       -- Anda mungkin perlu juga secara eksplisit meminta tree-sitter untuk mem-parse ulang
+--       -- tergantung bagaimana parser Anda diatur.
+--       -- Contoh: jika tree-sitter auto-parsing saat filetype berubah
+--     end
+--   end,
+-- })
+
+-- init.lua
+vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+  callback = function(args)
+    local bufnr = args.buf
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+    -- Periksa apakah nama buffer ada di /var/tmp dan tidak memiliki ekstensi yang jelas
+    -- atau filetype masih kosong/generic. Ini adalah heuristik.
+    -- Anda mungkin ingin membuat pola ini lebih spesifik jika mengetahui
+    -- format nama file sementara yang digunakan sudoedit di sistem Anda,
+    -- misalnya jika selalu diawali dengan 'sudoedit' atau pola tertentu.
+    if string.match(bufname, '^/var/tmp/') and (vim.bo[bufnr].filetype == '' or vim.bo[bufnr].filetype == 'conf') then
+      vim.notify('Mencoba deteksi filetype untuk file sementara: ' .. bufname, vim.log.levels.INFO)
+      -- Coba minta Neovim untuk mendeteksi ulang filetype.
+      -- Ini akan menjalankan skrip deteksi filetype standar Neovim
+      -- yang biasanya memeriksa shebang atau konten awal file.
+      vim.cmd 'filetype detect'
+
+      -- Setelah :filetype detect, periksa apakah filetype berhasil diubah dari default.
+      if vim.bo[bufnr].filetype ~= '' and vim.bo[bufnr].filetype ~= 'conf' then
+        vim.notify('Filetype terdeteksi sebagai: ' .. vim.bo[bufnr].filetype .. ' untuk ' .. bufname, vim.log.levels.INFO)
+        -- Tree-sitter biasanya akan otomatis mengambil alih setelah filetype yang benar diatur.
+        -- Jika karena alasan tertentu Tree-sitter tidak langsung aktif,
+        -- Anda mungkin perlu menambahkan perintah untuk memuat ulang parser Tree-sitter
+        -- untuk buffer saat ini. Namun, ini seringkali tidak diperlukan.
+        -- Contoh (aktifkan jika perlu dan sesuaikan dengan setup Tree-sitter Anda):
+        -- if pcall(require, "nvim-treesitter.highlight") then
+        --   vim.cmd("TSBufEnable highlight")
+        -- end
+      else
+        vim.notify('Gagal mendeteksi filetype spesifik untuk: ' .. bufname .. '. Tetap: ' .. vim.bo[bufnr].filetype, vim.log.levels.WARN)
+      end
+    end
+  end,
+  desc = 'Attempt to re-detect filetype for files opened via sudoedit in /var/tmp',
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -267,39 +318,6 @@ require('lazy').setup({
   --
   -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
   --
-  -- Cord.Nvim (neovim discord rich presence)
-  -- Docs = https://github.com/vyfor/cord.nvim
-  {
-    'vyfor/cord.nvim',
-    build = ':Cord update',
-    opts = function()
-      return {
-        display = {
-          theme = 'default',
-          flavor = 'accent',
-          swap_fields = true,
-          swap_icons = true,
-        },
-        timestamp = {
-          enabled = true,
-          reset_on_idle = true,
-          reset_on_change = false,
-        },
-        text = {
-          editing = function(opts)
-            return string.format('Editing %s - Line %s: Column %s', opts.filename, opts.cursor_line, opts.cursor_char)
-          end,
-        },
-        hooks = {
-          post_activity = function(opts, activity)
-            local version = vim.version()
-            activity.assets.small_text = string.format('Neovim %s.%s.%s', version.major, version.minor, version.patch)
-          end,
-        },
-      }
-    end,
-  },
-
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
   -- If you prefer to call `setup` explicitly, use:
   --    {
@@ -457,6 +475,9 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        find_files = {
+          hidden = true,
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -791,8 +812,10 @@ require('lazy').setup({
         cssmodules_ls = {},
         css_variables = {},
         tailwindcss = {},
+        intelephense = {},
         jsonls = {},
         jqls = {},
+        kotlin_language_server = {},
         cmake = {},
         mesonlsp = {},
         bashls = {},
@@ -800,6 +823,9 @@ require('lazy').setup({
         awk_ls = {},
         hyprls = {},
         marksman = {},
+        tinymist = {},
+        taplo = {},
+        systemd_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -825,7 +851,7 @@ require('lazy').setup({
         'shfmt',
         'prettierd',
         'prettier',
-        'htmlbeautifier',
+        'eslint_d',
         'htmlhint',
         'clang-format',
         'cmakelang',
@@ -834,6 +860,12 @@ require('lazy').setup({
         'marksman',
         'jsonlint',
         'checkstyle',
+        'ktfmt',
+        'ktlint',
+        'duster',
+        'tlint',
+        'prettypst',
+        'systemdlint',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -853,8 +885,6 @@ require('lazy').setup({
       }
     end,
   },
-
-  { 'mfussenegger/nvim-jdtls' },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -893,15 +923,19 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        php = { 'duster' },
         json = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'htmlbeautifier' },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
         bash = { 'shfmt' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
         java = { 'clang-format' },
+        kotlin = { 'ktfmt' },
         cmake = { 'cmakelang' },
+        typest = { 'prettypst' },
       },
     },
   },
@@ -928,12 +962,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
@@ -980,6 +1014,39 @@ require('lazy').setup({
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        menu = {
+          draw = {
+            components = {
+              -- customize the drawing of kind icons
+              kind_icon = {
+                text = function(ctx)
+                  -- default kind icon
+                  local icon = ctx.kind_icon
+                  -- if LSP source, check for color derived from documentation
+                  if ctx.item.source_name == 'LSP' then
+                    local color_item = require('nvim-highlight-colors').format(ctx.item.documentation, { kind = ctx.kind })
+                    if color_item and color_item.abbr ~= '' then
+                      icon = color_item.abbr
+                    end
+                  end
+                  return icon .. ctx.icon_gap
+                end,
+                highlight = function(ctx)
+                  -- default highlight group
+                  local highlight = 'BlinkCmpKind' .. ctx.kind
+                  -- if LSP source, check for color derived from documentation
+                  if ctx.item.source_name == 'LSP' then
+                    local color_item = require('nvim-highlight-colors').format(ctx.item.documentation, { kind = ctx.kind })
+                    if color_item and color_item.abbr_hl_group then
+                      highlight = color_item.abbr_hl_group
+                    end
+                  end
+                  return highlight
+                end,
+              },
+            },
+          },
+        },
       },
 
       sources = {
@@ -1117,7 +1184,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!

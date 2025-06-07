@@ -10,6 +10,9 @@ return {
         bash = { 'shellcheck' },
         cmake = { 'cmakelang' },
         html = { 'htmlhint' },
+        php = { 'tlint' },
+        javascript = { 'eslint_d' },
+        typescript = { 'eslint_d' },
         css = { 'stylelint' },
         less = { 'stylelint' },
         scss = { 'stylelint' },
@@ -17,6 +20,8 @@ return {
         python = { 'ruff' },
         json = { 'jsonlint' },
         java = { 'checkstyle' },
+        kotlin = { 'ktlint' },
+        systemd = { 'systemdlint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

@@ -78,6 +78,7 @@ local config = {
             path = '/usr/lib/jvm/java-21-openjdk/',
             javadoc = '/usr/share/doc/java21-openjdk/api/',
             sources = '/usr/lib/jvm/java-21-openjdk/lib/src.zip',
+            default = true,
           },
         },
       },
