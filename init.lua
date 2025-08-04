@@ -88,7 +88,7 @@ vim.o.termguicolors = true
 -- Neovim Specific settings if opened in Neovide
 if vim.g.neovide then
   -- Set Default TERM env for Neovide
-  vim.env.TERM = 'xterm-kitty'
+  vim.env.COLORTERM = 'truecolor'
   -- vim.env.TERM = 'xterm-256color'
 
   -- Set the Default Font
@@ -101,6 +101,11 @@ end
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+-- Set nvim provider
+vim.g.python3_host_prog = '/usr/bin/python3'
+vim.g.node_host_prog = vim.fn.expand '~' .. '/.local/share/npm-packages/node_modules/.bin/neovim-node-host'
+vim.g.perl_host_prog = '/usr/bin/perl'
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -474,9 +479,10 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
-        find_files = {
-          hidden = true,
+        pickers = {
+          find_files = {
+            hidden = false,
+          },
         },
         extensions = {
           ['ui-select'] = {
@@ -492,6 +498,7 @@ require('lazy').setup({
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>sm', builtin.man_pages, { desc = '[S]earch [M]anpages' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -749,15 +756,15 @@ require('lazy').setup({
           },
         },
         gopls = {},
-        -- pyright = {
-        --   settings = {
-        --     python = {
-        --       completion = {
-        --         callSnippet = 'Replace',
-        --       },
-        --     },
-        --   },
-        -- },
+        pyright = {
+          settings = {
+            python = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+            },
+          },
+        },
         ruff = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -818,14 +825,20 @@ require('lazy').setup({
         kotlin_language_server = {},
         cmake = {},
         mesonlsp = {},
-        bashls = {},
+        bashls = {
+          settings = {
+            filetypes = { 'sh', 'bash', 'zsh' },
+          },
+        },
         autotools_ls = {},
         awk_ls = {},
         hyprls = {},
         marksman = {},
+        powershell_es = {},
         tinymist = {},
         taplo = {},
         systemd_ls = {},
+        gh_actions_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -848,7 +861,7 @@ require('lazy').setup({
         'black',
         'ruff',
         'shellcheck',
-        'shfmt',
+        'beautysh',
         'prettierd',
         'prettier',
         'eslint_d',
@@ -866,6 +879,7 @@ require('lazy').setup({
         'tlint',
         'prettypst',
         'systemdlint',
+        'yamllint',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -929,13 +943,15 @@ require('lazy').setup({
         html = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
-        bash = { 'shfmt' },
+        bash = { 'beautysh' },
+        zsh = { 'beautysh' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
         java = { 'clang-format' },
         kotlin = { 'ktfmt' },
         cmake = { 'cmakelang' },
         typest = { 'prettypst' },
+        yaml = { 'prettierd', 'prettier' },
       },
     },
   },
@@ -1200,7 +1216,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',

@@ -8,6 +8,7 @@ return {
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
         bash = { 'shellcheck' },
+        zsh = { 'shellcheck' },
         cmake = { 'cmakelang' },
         html = { 'htmlhint' },
         php = { 'tlint' },
@@ -22,6 +23,7 @@ return {
         java = { 'checkstyle' },
         kotlin = { 'ktlint' },
         systemd = { 'systemdlint' },
+        yaml = { 'yamllint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

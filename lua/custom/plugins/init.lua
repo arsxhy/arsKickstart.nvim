@@ -15,8 +15,8 @@ return {
         display = {
           theme = 'default',
           flavor = 'accent',
-          swap_fields = true,
-          swap_icons = true,
+          swap_fields = false,
+          swap_icons = false,
         },
         timestamp = {
           enabled = true,
@@ -24,9 +24,26 @@ return {
           reset_on_change = false,
         },
         text = {
-          editing = function(opts)
-            return string.format('Editing %s - Line %s: Column %s', opts.filename, opts.cursor_line, opts.cursor_char)
+          viewing = function(opts)
+            return string.format('Viewing %s', opts.filename)
           end,
+          editing = function(opts)
+            local total_lines = vim.fn.line '$'
+            return string.format('Editing %s - Line %s out of %s', opts.filename, opts.cursor_line, total_lines)
+          end,
+          workspace = function(opts)
+            return string.format('Workspace: %s', opts.workspace)
+          end,
+        },
+        buttons = {
+          {
+            label = function(opts)
+              return opts.repo_url and 'View Repository'
+            end,
+            url = function(opts)
+              return opts.repo_url or 'https://github.com/arsxhy/'
+            end,
+          },
         },
         hooks = {
           post_activity = function(opts, activity)
@@ -34,6 +51,26 @@ return {
             activity.assets.small_text = string.format('Neovim %s.%s.%s', version.major, version.minor, version.patch)
           end,
         },
+        plugins = {
+          'cord.plugins.diagnostics', -- Enable diagnostics plugin with default settings
+
+          -- ['cord.plugins.diagnostics'] = { -- Configure diagnostics plugin
+          --   scope = 'buffer', -- Set scope to 'workspace' instead of default 'buffer'
+          --   severity = vim.diagnostic.severity.WARN, -- Show warnings and above
+          -- },
+        },
+        advanced = {
+          workspace = {
+            root_markers = {
+              '.git',
+              '.hg',
+              '.svn',
+            },
+            limit_to_cwd = false,
+          },
+        },
+        -- in cord's cfg
+        log_level = 'trace',
       }
     end,
   },
@@ -101,5 +138,39 @@ return {
       }
     end,
     dependencies = { { 'nvim-tree/nvim-web-devicons' } },
+  },
+  -- https://github.com/CRAG666/betterTerm.nvim
+  {
+    'CRAG666/betterTerm.nvim',
+    keys = {
+      {
+        mode = { 'n', 't' },
+        '<C-`>',
+        function()
+          require('betterTerm').open()
+        end,
+        desc = 'Open BetterTerm 0',
+      },
+      {
+        mode = { 'n', 't' },
+        '<C-1>',
+        function()
+          require('betterTerm').open(1)
+        end,
+        desc = 'Open BetterTerm 1',
+      },
+      {
+        '<leader>`t',
+        function()
+          require('betterTerm').select()
+        end,
+        desc = 'Select terminal',
+      },
+    },
+    opts = {
+      position = 'bot',
+      size = 25,
+      jump_tab_mapping = '<A-$tab>',
+    },
   },
 }

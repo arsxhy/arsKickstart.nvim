@@ -23,6 +23,9 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'microsoft/debugpy',
+    'microsoft/vscode-cpptools',
+    'firefox-devtools/vscode-firefox-debug',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -95,6 +98,9 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'debugpy',
+        'cpptools',
+        'firefox-debug-adapter',
       },
     }
 
