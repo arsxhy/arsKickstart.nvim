@@ -52,7 +52,7 @@ return {
           end,
         },
         plugins = {
-          'cord.plugins.diagnostics', -- Enable diagnostics plugin with default settings
+          -- 'cord.plugins.diagnostics', -- Enable diagnostics plugin with default settings
 
           -- ['cord.plugins.diagnostics'] = { -- Configure diagnostics plugin
           --   scope = 'buffer', -- Set scope to 'workspace' instead of default 'buffer'
@@ -70,7 +70,7 @@ return {
           },
         },
         -- in cord's cfg
-        log_level = 'trace',
+        log_level = 'info',
       }
     end,
   },
