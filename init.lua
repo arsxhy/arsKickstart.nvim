@@ -839,6 +839,7 @@ require('lazy').setup({
         taplo = {},
         systemd_ls = {},
         gh_actions_ls = {},
+        qmlls = {},
       }
 
       -- Ensure the servers and tools above are installed
