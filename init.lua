@@ -819,7 +819,11 @@ require('lazy').setup({
         cssmodules_ls = {},
         css_variables = {},
         tailwindcss = {},
-        intelephense = {},
+        intelephense = {
+          init_options = {
+            globalStoragePath = os.getenv 'HOME' .. '/.local/share/intelephense',
+          },
+        },
         jsonls = {},
         jqls = {},
         kotlin_language_server = {},
@@ -840,6 +844,9 @@ require('lazy').setup({
         systemd_ls = {},
         gh_actions_ls = {},
         qmlls = {},
+        -- postgres_lsp = {},
+        sqlls = {},
+        -- sqls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -881,6 +888,9 @@ require('lazy').setup({
         'prettypst',
         'systemdlint',
         'yamllint',
+        -- 'sql-formatter',
+        -- 'sqlfluff',
+        'sqruff',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 

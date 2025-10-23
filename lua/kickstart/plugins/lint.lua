@@ -24,6 +24,8 @@ return {
         kotlin = { 'ktlint' },
         systemd = { 'systemdlint' },
         yaml = { 'yamllint' },
+        sql = { 'sqruff' },
+        -- postgres = { 'postgres_lsp' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
