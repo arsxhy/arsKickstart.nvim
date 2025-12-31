@@ -841,7 +841,7 @@ require('lazy').setup({
         powershell_es = {},
         tinymist = {},
         taplo = {},
-        systemd_ls = {},
+        systemd_lsp = {},
         gh_actions_ls = {},
         qmlls = {},
         -- postgres_lsp = {},
@@ -1242,7 +1242,7 @@ require('lazy').setup({
   require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
