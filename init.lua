@@ -819,11 +819,11 @@ require('lazy').setup({
         cssmodules_ls = {},
         css_variables = {},
         tailwindcss = {},
-        intelephense = {
-          init_options = {
-            globalStoragePath = os.getenv 'HOME' .. '/.local/share/intelephense',
-          },
-        },
+        -- intelephense = {
+        --   init_options = {
+        --     globalStoragePath = os.getenv 'HOME' .. '/.local/share/intelephense',
+        --   },
+        -- },
         jsonls = {},
         jqls = {},
         kotlin_language_server = {},
@@ -884,7 +884,7 @@ require('lazy').setup({
         'checkstyle',
         'ktfmt',
         'ktlint',
-        'duster',
+        -- 'duster',
         'tlint',
         'prettypst',
         'systemdlint',
@@ -950,7 +950,7 @@ require('lazy').setup({
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        php = { 'duster' },
+        -- php = { 'duster' },
         json = { 'prettierd', 'prettier', stop_after_first = true },
         html = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
