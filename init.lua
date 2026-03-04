@@ -170,7 +170,7 @@ vim.o.list = true
 vim.opt.listchars = {
   tab = '» ',
   trail = '·',
-  nbsp = '␣'
+  nbsp = '␣',
 }
 
 -- Preview substitutions live, as you type!
@@ -531,7 +531,11 @@ require('lazy').setup({
       { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
-      'saghen/blink.cmp',
+      {
+        'saghen/blink.cmp',
+        version = '*',
+        build = 'cargo build --release',
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -755,6 +759,7 @@ require('lazy').setup({
         qmlls = {},
         -- postgres_lsp = {},
         sqlls = {},
+        phpactor = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -793,6 +798,7 @@ require('lazy').setup({
         'checkstyle',
         'ktfmt',
         'ktlint',
+        'cpplint',
         -- 'duster',
         'tlint',
         'prettypst',

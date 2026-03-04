@@ -9,6 +9,8 @@ return {
         markdown = { 'markdownlint' },
         bash = { 'shellcheck' },
         zsh = { 'shellcheck' },
+        c = { 'cpplint' },
+        cpp = { 'cpplint' },
         cmake = { 'cmakelang' },
         html = { 'htmlhint' },
         php = { 'tlint' },
