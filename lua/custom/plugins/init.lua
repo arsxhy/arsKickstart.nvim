@@ -51,7 +51,7 @@ return {
             activity.assets.small_text = string.format('Neovim %s.%s.%s', version.major, version.minor, version.patch)
           end,
         },
-        plugins = {
+        extensions = {
           -- 'cord.plugins.diagnostics', -- Enable diagnostics plugin with default settings
 
           -- ['cord.plugins.diagnostics'] = { -- Configure diagnostics plugin
