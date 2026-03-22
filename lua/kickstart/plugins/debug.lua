@@ -26,6 +26,7 @@ return {
     'microsoft/debugpy',
     'microsoft/vscode-cpptools',
     'firefox-devtools/vscode-firefox-debug',
+    'xdebug/vscode-php-debug',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
